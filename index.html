@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ✏️ แก้ชื่อเว็บไซต์ตรงนี้ -->
+<title>ฟังจังหวะผ่านดนตรี | ดนตรี ป.4</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif;background:#f4f7ff;color:#24324a}
+header{background:linear-gradient(135deg,#5b5bd6,#7b61ff);color:white;padding:28px 20px;text-align:center}
+header h1{margin:0 0 8px;font-size:clamp(28px,5vw,44px)}
+header p{margin:0;font-size:17px}
+.container{max-width:1100px;margin:auto;padding:22px}
+.screen{display:none}
+.screen.active{display:block}
+.welcome{background:white;border-radius:24px;padding:30px;box-shadow:0 6px 22px #24324a15;text-align:center}
+.welcome h2{margin:0 0 8px;color:#4d4fc6;font-size:30px}
+.welcome p{margin:0 0 25px;color:#69758b}
+.groups{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.group-card{border:0;border-radius:22px;padding:25px 15px;cursor:pointer;background:#fff;box-shadow:0 6px 20px #24324a15;transition:.2s;font-family:inherit}
+.group-card:hover{transform:translateY(-4px)}
+.group-icon{font-size:64px;line-height:1.1;margin-bottom:10px}
+.group-card h3{margin:5px 0;font-size:23px}
+.group-card p{margin:0;color:#7b8497}
+.elephant{background:#fff5f0}.bird{background:#f0f9ff}.dog{background:#fff9e9}.cat{background:#f6f0ff}
+.scorebar{background:white;border-radius:18px;padding:16px 20px;margin:0 0 20px;box-shadow:0 5px 18px #24324a18;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.score{font-weight:800;font-size:20px}.progress{flex:1;min-width:180px;height:14px;background:#e8ebf5;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:#35b86f;transition:.4s}
+.lesson-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:15px;flex-wrap:wrap}
+.lesson-head h2{margin:0;color:#4d4fc6}
+.back-btn{border:0;border-radius:12px;padding:10px 14px;background:#eef0ff;color:#4447b8;font-weight:700;cursor:pointer}
+.group-label{display:inline-block;padding:6px 12px;border-radius:999px;background:#f0f2ff;color:#4d4fc6;font-weight:800}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+nav button{border:0;background:white;padding:14px 8px;border-radius:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px #24324a12;color:#536078}
+nav button.active{background:#5b5bd6;color:white}
+.card{background:white;border-radius:22px;padding:26px;box-shadow:0 6px 22px #24324a15}
+.mission{display:none}.mission.active{display:block}
+h2{margin-top:0;color:#4d4fc6}
+.instructions{background:#f0f2ff;padding:14px 16px;border-radius:14px;margin:14px 0 20px}
+.options{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+button.action{border:0;border-radius:14px;padding:14px 16px;background:#eef0ff;color:#4447b8;font-size:16px;font-weight:700;cursor:pointer}
+button.action:hover{transform:translateY(-1px)}
+button.primary{background:#5b5bd6;color:white}
+button.success{background:#35b86f;color:white}
+.result{margin-top:18px;padding:14px;border-radius:14px;background:#f5f7fb;font-weight:700}
+.rhythm{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0;min-height:54px;padding:10px;border:2px dashed #cdd3e5;border-radius:14px}
+.token{padding:10px 14px;border-radius:10px;background:#ffe6a7;font-weight:800}
+.beat-box{margin:18px 0;padding:22px;border-radius:20px;background:linear-gradient(135deg,#f6f4ff,#eef8ff);text-align:center}
+.beat-image-wrap{margin:18px auto;display:flex;justify-content:center;align-items:center;background:#fff;border-radius:20px;padding:10px;overflow:hidden;border:1px solid #d7dced}
+.beat-group-image{display:block;width:100%;max-width:760px;height:auto;border-radius:14px}
+
+.beat-title{font-size:30px;font-weight:900;color:#4d4fc6;letter-spacing:2px;margin-bottom:12px}
+.animal-onomatopoeia{font-size:28px;font-weight:900;margin:8px 0 12px}
+.beat-count{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:14px 0}
+.beat-count span{width:54px;height:54px;display:grid;place-items:center;border-radius:14px;background:white;font-size:22px;font-weight:900;box-shadow:0 4px 10px #24324a12}
+footer{text-align:center;padding:30px;color:#778198}
+@media(max-width:800px){.groups{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){nav{grid-template-columns:repeat(2,1fr)}.card{padding:20px}.groups{grid-template-columns:1fr 1fr}.group-icon{font-size:52px}}
+</style>
+</head>
+<body>
+<header>
+  <!-- ✏️ แก้ชื่อเว็บไซต์/หัวข้อใหญ่ตรงนี้ -->
+  <h1>🎵 ฟังจังหวะผ่านดนตรี</h1>
+  <!-- ✏️ แก้คำอธิบายใต้ชื่อเว็บไซต์ตรงนี้ -->
+  <p>บทเรียนดนตรี ป.4 | ฟัง → จับจังหวะ → ตบมือ → ร้องเพลง → สร้างสรรค์</p>
+</header>
+
+<main class="container">
+
+  <!-- หน้าแรกเลือกกลุ่ม -->
+  <section id="homeScreen" class="screen active">
+    <div class="welcome">
+      <h2>เลือกกลุ่มของคุณ</h2>
+      <p>กดเลือกกลุ่มสัตว์เพื่อเริ่มภารกิจการเรียนรู้ดนตรี</p>
+
+      <!-- ✏️ ส่วนนี้คือ 4 กลุ่ม สามารถเปลี่ยนชื่อ ไอคอน และคำอธิบายของแต่ละกลุ่มได้ -->
+      <div class="groups">
+        <!-- ✏️ แก้ชื่อกลุ่มช้าง / อีโมจิ / ข้อความได้ตรงนี้ -->
+        <button class="group-card elephant" onclick="selectGroup('กลุ่มช้าง','🐘')">
+          <div class="group-icon">🐘</div>
+          <h3>กลุ่มช้าง</h3>
+          <p>ฟังจังหวะให้แม่น!</p>
+        </button>
+
+        <!-- ✏️ แก้ชื่อกลุ่มนก / อีโมจิ / ข้อความได้ตรงนี้ -->
+        <button class="group-card bird" onclick="selectGroup('กลุ่มนก','🐦')">
+          <div class="group-icon">🐦</div>
+          <h3>กลุ่มนก</h3>
+          <p>ฟังเสียงและจังหวะ!</p>
+        </button>
+
+        <!-- ✏️ แก้ชื่อกลุ่มสุนัข / อีโมจิ / ข้อความได้ตรงนี้ -->
+        <button class="group-card dog" onclick="selectGroup('กลุ่มสุนัข','🐶')">
+          <div class="group-icon">🐶</div>
+          <h3>กลุ่มสุนัข</h3>
+          <p>สร้างจังหวะสนุก ๆ!</p>
+        </button>
+
+        <!-- ✏️ แก้ชื่อกลุ่มแมว / อีโมจิ / ข้อความได้ตรงนี้ -->
+        <button class="group-card cat" onclick="selectGroup('กลุ่มแมว','🐱')">
+          <div class="group-icon">🐱</div>
+          <h3>กลุ่มแมว</h3>
+          <p>ร้องและตบมือไปด้วยกัน!</p>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- หน้าบทเรียน -->
+  <section id="lessonScreen" class="screen">
+    <div class="lesson-head">
+      <div>
+        <span id="groupLabel" class="group-label">กลุ่มช้าง 🐘</span>
+      </div>
+      <button class="back-btn" onclick="goHome()">← กลับไปเลือกกลุ่ม</button>
+    </div>
+
+    <section class="scorebar">
+      <div class="score">คะแนน: <span id="score">0</span>/100</div>
+      <div class="progress"><i id="progress"></i></div>
+      <div id="status">เริ่มภารกิจได้เลย!</div>
+    </section>
+
+    <nav>
+      <button class="active" onclick="showMission(1)">🐘 ภารกิจ 1</button>
+      <button onclick="showMission(2)">👏 ภารกิจ 2</button>
+      <button onclick="showMission(3)">🎤 ภารกิจ 3</button>
+      <button onclick="showMission(4)">🥁 ภารกิจ 4</button>
+    </nav>
+
+    <!-- 🎯 ภารกิจที่ 1 | ✏️ เปลี่ยนชื่อและคำอธิบายภารกิจได้ตรงนี้ -->
+    <section id="m1" class="card mission active">
+      <h2>ภารกิจที่ 1: ฟังเสียงสัตว์ แล้วทายให้ถูก</h2>
+      <div class="instructions">
+        มีเสียงสัตว์ 4 ชนิด ได้แก่ <b>ช้าง 🐘 • แมว 🐱 • สุนัข 🐶 • นก 🐦</b><br>
+        กด “🔊 เล่นเสียงปริศนา” แล้วเลือกคำตอบที่ได้ยิน
+      </div>
+      <div class="options">
+        <button class="action primary" onclick="animalSound()">🔊 เล่นเสียงปริศนา</button>
+        <button class="action" onclick="stopAnimalAudio()">⏹️ หยุดเสียง</button>
+        <button class="action" onclick="animalAnswer('ช้าง')">🐘 ช้าง</button>
+        <button class="action" onclick="animalAnswer('แมว')">🐱 แมว</button>
+        <button class="action" onclick="animalAnswer('สุนัข')">🐶 สุนัข</button>
+        <button class="action" onclick="animalAnswer('นก')">🐦 นก</button>
+      </div>
+      <div id="r1" class="result">กด “เล่นเสียงปริศนา” เพื่อเริ่ม</div>
+    </section>
+
+    <!-- 🎯 ภารกิจที่ 2 | ✏️ รูปภาพ Beat เปลี่ยนตามกลุ่มที่เลือก -->
+    <section id="m2" class="card mission">
+      <h2>ภารกิจที่ 2: Beat</h2>
+      <div class="instructions">
+        ดูรูปภาพกิจกรรมของกลุ่ม แล้วเคาะจังหวะ <b>1 2 3 4</b> ให้สม่ำเสมอตามภาพ
+      </div>
+
+      <!-- 🖼️ รูปภาพจากตัวอย่างที่ผู้ใช้ส่งมา -->
+      <div class="beat-image-wrap">
+        <img id="beatGroupImage" class="beat-group-image" src="beat-images/group1-elephant.png" alt="Group 1 Beat - กลุ่มช้าง">
+      </div>
+
+      <div class="options">
+        <!-- 🔊 เสียงประจำกลุ่มเล่น 1 ครั้ง ไม่วนลูป -->
+        <button class="action primary" onclick="playRhythm()">🔊 เล่นเสียงประจำกลุ่ม</button>
+        <button class="action" onclick="stopAnimalAudio()">⏹️ หยุดเสียง</button>
+        <button class="action success" onclick="rhythmComplete()">✅ ฉันเคาะจังหวะ 1 2 3 4 แล้ว</button>
+      </div>
+      <div id="r2" class="result">เลือกกลุ่มแล้วกด “เล่นเสียงประจำกลุ่ม” จากนั้นเคาะจังหวะตามภาพ</div>
+    </section>
+
+    <!-- 🎯 ภารกิจที่ 3 | ✏️ เปลี่ยนชื่อและคำอธิบายภารกิจได้ตรงนี้ -->
+    <section id="m3" class="card mission">
+      <h2>ภารกิจที่ 3: ฟังจังหวะ ตบมือ และร้องเพลง</h2>
+      <div class="instructions">ใช้เสียงสัตว์ประจำกลุ่มเป็นเสียงตั้งต้น แล้วทำกิจกรรม “ฟัง + ตบมือ + ร้องตามจังหวะ”</div>
+      <div class="options">
+        <button class="action primary" onclick="playGroupSound(3)">🔊 เล่นเสียงประจำกลุ่ม</button>
+        <button class="action" onclick="stopAnimalAudio()">⏹️ หยุดเสียง</button>
+        <button class="action success" onclick="finishSong()">✅ ทำภารกิจสำเร็จ</button>
+      </div>
+      <div id="r3" class="result">เลือกกลุ่มแล้วกด “เล่นเสียงประจำกลุ่ม”</div>
+    </section>
+
+    <!-- 🎯 ภารกิจที่ 4 | ✏️ เปลี่ยนชื่อและคำอธิบายภารกิจได้ตรงนี้ -->
+    <section id="m4" class="card mission">
+      <h2>ภารกิจที่ 4: จังหวะของฉัน ให้เพื่อนทำตาม</h2>
+      <div class="instructions">สร้างลำดับจังหวะของตัวเอง แล้วกดเล่นให้เพื่อนทำตาม</div>
+      <div class="options">
+        <button class="action" onclick="addToken('👏 ตบมือ')">👏 ตบมือ</button>
+        <button class="action" onclick="addToken('🥁 กลอง')">🥁 กลอง</button>
+        <button class="action" onclick="addToken('🎵 เสียงดนตรี')">🎵 เสียงดนตรี</button>
+        <button class="action" onclick="addToken('— พัก')">— พัก</button>
+        <button class="action primary" onclick="playCreated()">▶️ เล่นจังหวะ</button>
+        <button class="action" onclick="clearRhythm()">🗑️ ล้าง</button>
+      </div>
+      <div id="created" class="rhythm"></div>
+      <div id="r4" class="result">สร้างจังหวะอย่างน้อย 1 ช่อง</div>
+    </section>
+  </section>
+</main>
+
+<audio id="groupAudioPlayer" preload="auto" style="display:none"></audio>
+<!-- ✏️ แก้ข้อความด้านล่างเว็บไซต์ตรงนี้ -->
+<footer>สื่อการเรียนรู้ดนตรี ป.4 • ฟังจังหวะผ่านดนตรี</footer>
+
+<script>
+let score=0, done={1:false,2:false,3:false,4:false}, created=[];
+let selectedGroup='';
+let selectedSong=false;
+let groupAudio=null;
+function stopAnimalAudio(){
+ const p=document.getElementById('groupAudioPlayer');
+ if(p){p.pause();p.currentTime=0;}
+}
+
+// 🔊 ✏️ ตรงนี้คือจุดเปลี่ยนเสียงของแต่ละกลุ่ม
+// เปลี่ยนชื่อไฟล์ได้ แต่ชื่อในโค้ดต้องตรงกับไฟล์ในโฟลเดอร์ sounds
+const groupSoundFiles={
+  'กลุ่มช้าง':'sounds/elephant.mp3',
+  'กลุ่มนก':'sounds/bird.mp3',
+  'กลุ่มสุนัข':'sounds/dog.mp3',
+  'กลุ่มแมว':'sounds/cat.mp3'
+};
+function playGroupSound(mission){
+  if(!selectedGroup){
+    const id=mission===2?'r2':'r3';
+    document.getElementById(id).textContent='⚠️ กรุณาเลือกกลุ่มก่อน';
+    return;
+  }
+  const player=document.getElementById('groupAudioPlayer');
+  const src=groupSoundFiles[selectedGroup];
+  player.pause();
+  player.currentTime=0;
+  player.src=src;
+  player.loop=false;
+  player.load();
+  const id=mission===2?'r2':'r3';
+  const label=selectedGroup.replace('กลุ่ม','');
+  player.onended=()=>{
+    if(mission===2){
+      document.getElementById(id).textContent='✅ ฟังเสียงแล้ว เคาะจังหวะ 1 2 3 4 ตามภาพให้สม่ำเสมอ';
+    }
+  };
+  player.onerror=()=>{
+    document.getElementById(id).textContent='❌ เปิดเสียงไม่สำเร็จ กรุณาตรวจสอบว่าโฟลเดอร์ sounds ถูกอัปโหลดพร้อม index.html';
+  };
+  player.play().then(()=>{
+    document.getElementById(id).textContent='🔊 กำลังเล่นเสียง'+label+' (เล่นครั้งเดียว)';
+  }).catch(()=>{
+    document.getElementById(id).textContent='❌ เบราว์เซอร์ยังไม่อนุญาตให้เล่นเสียง กดปุ่มอีกครั้ง';
+  });
+  if(mission===3) selectedSong=true;
+}
+
+function selectGroup(name, icon){
+ if(groupAudio){groupAudio.pause(); groupAudio.currentTime=0;}
+ const p=document.getElementById('groupAudioPlayer'); if(p){p.pause(); p.currentTime=0;}
+ selectedGroup=name;
+ document.getElementById('homeScreen').classList.remove('active');
+ document.getElementById('lessonScreen').classList.add('active');
+ document.getElementById('groupLabel').textContent=name+' '+icon;
+ updateBeatContent();
+ resetLesson();
+}
+function goHome(){
+ stopAnimalAudio();
+ document.getElementById('lessonScreen').classList.remove('active');
+ document.getElementById('homeScreen').classList.add('active');
+}
+function resetLesson(){
+ score=0; done={1:false,2:false,3:false,4:false}; selectedSong=false; created=[]; stopAnimalAudio();
+ document.getElementById('score').textContent='0';
+ document.getElementById('progress').style.width='0%';
+ document.getElementById('status').textContent='เริ่มภารกิจได้เลย!';
+ document.getElementById('r1').textContent='ยังไม่ได้ตอบ';
+ document.getElementById('r2').textContent='เลือกกลุ่มแล้วดูภาพกิจกรรม จากนั้นเคาะจังหวะตามภาพ';
+ document.getElementById('r3').textContent='เลือกกลุ่มแล้วกด “เล่นเสียงประจำกลุ่ม”';
+ document.getElementById('r4').textContent='สร้างจังหวะอย่างน้อย 1 ช่อง';
+ document.getElementById('created').innerHTML='';
+ updateBeatContent();
+ showMission(1);
+}
+function showMission(n){
+ document.querySelectorAll('.mission').forEach(x=>x.classList.remove('active'));
+ document.getElementById('m'+n).classList.add('active');
+ document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('active',i===n-1));
+}
+function addScore(n,mission){
+ if(done[mission]) return;
+ done[mission]=true; score=Math.min(100,score+n);
+ document.getElementById('score').textContent=score;
+ document.getElementById('progress').style.width=score+'%';
+ document.getElementById('status').textContent=score===100?'🎉 ทำครบทุกภารกิจแล้ว!':'เก่งมาก! ไปต่อได้เลย';
+}
+function beep(freq=440,duration=.18,delay=0){
+ const ctx=new (window.AudioContext||window.webkitAudioContext)();
+ const o=ctx.createOscillator(), g=ctx.createGain();
+ o.frequency.value=freq;o.type='sine';g.gain.setValueAtTime(.001,ctx.currentTime+delay);
+ g.gain.exponentialRampToValueAtTime(.18,ctx.currentTime+delay+.02);
+ g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+duration);
+ o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime+delay);o.stop(ctx.currentTime+delay+duration+.03);
+}
+let currentAnimal='';
+function playTone(freq,duration,delay=0,type='sine',gainValue=.16){
+ const ctx=new (window.AudioContext||window.webkitAudioContext)();
+ const o=ctx.createOscillator(), g=ctx.createGain();
+ o.type=type;
+ o.frequency.setValueAtTime(freq,ctx.currentTime+delay);
+ g.gain.setValueAtTime(.001,ctx.currentTime+delay);
+ g.gain.exponentialRampToValueAtTime(gainValue,ctx.currentTime+delay+.02);
+ g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+duration);
+ o.connect(g); g.connect(ctx.destination);
+ o.start(ctx.currentTime+delay);
+ o.stop(ctx.currentTime+delay+duration+.04);
+}
+// 🐾 ✏️ ตรงนี้คือเสียงที่ใช้ในภารกิจที่ 1
+// เปลี่ยนชื่อไฟล์ของสัตว์แต่ละตัวได้ที่ object ด้านล่าง
+function animalSound(){
+ const animals=['ช้าง','แมว','สุนัข','นก'];
+ currentAnimal=animals[Math.floor(Math.random()*animals.length)];
+ const player=document.getElementById('groupAudioPlayer');
+ player.pause(); player.currentTime=0;
+ // 🔊 ✏️ เปลี่ยนไฟล์เสียงจริงของ ช้าง/แมว/สุนัข/นก ตรงนี้
+ player.src=({
+   'ช้าง':'sounds/elephant.mp3',
+   'แมว':'sounds/cat.mp3',
+   'สุนัข':'sounds/dog.mp3',
+   'นก':'sounds/bird.mp3'
+ })[currentAnimal];
+ player.loop=false;
+ player.load();
+ player.play().then(()=>{
+   document.getElementById('r1').textContent='🔊 ฟังเสียงจริงแล้วเลือกคำตอบให้ถูกต้อง';
+ }).catch(()=>{
+   document.getElementById('r1').textContent='❌ เปิดเสียงไม่สำเร็จ กดปุ่มอีกครั้ง';
+ });
+}
+function animalAnswer(a){
+ if(!currentAnimal){
+   document.getElementById('r1').textContent='⚠️ กด “เล่นเสียงปริศนา” ก่อน';
+   return;
+ }
+ if(a===currentAnimal){
+   document.getElementById('r1').textContent='✅ ถูกต้อง! เยี่ยมมาก';
+   stopAnimalAudio();
+   addScore(25,1);
+ }else{
+   document.getElementById('r1').textContent='❌ ยังไม่ถูก ลองกดเล่นเสียงอีกครั้ง';
+ }
+}
+// 📄 เนื้อหาจากเอกสาร “เอกสาร1.pdf” สำหรับภารกิจที่ 2
+// Group 1 = ช้าง / Group 2 = แมว / Group 3 = สุนัข / Group 4 = นก
+const beatByGroup={
+  'กลุ่มช้าง':{group:'Group 1',soundText:'แปร๊น แปร๊น แปร๊น แปร๊น',instruction:'ฟังเสียงช้าง แล้วเคาะจังหวะให้สม่ำเสมอ'},
+  'กลุ่มแมว':{group:'Group 2',soundText:'เหมียว เหมียว เหมียว เหมียว',instruction:'ฟังเสียงแมว แล้วเคาะจังหวะให้สม่ำเสมอ'},
+  'กลุ่มสุนัข':{group:'Group 3',soundText:'โฮ่ง โฮ่ง โฮ่ง โฮ่ง',instruction:'ฟังเสียงสุนัข แล้วเคาะจังหวะให้สม่ำเสมอ'},
+  'กลุ่มนก':{group:'Group 4',soundText:'จิ๊บ จิ๊บ จิ๊บ จิ๊บ',instruction:'ฟังเสียงนก แล้วเคาะจังหวะให้สม่ำเสมอ'}
+};
+function updateBeatContent(){
+ const imageByGroup={
+   'กลุ่มช้าง':'beat-images/group1-elephant.png',
+   'กลุ่มแมว':'beat-images/group2-cat.png',
+   'กลุ่มสุนัข':'beat-images/group3-dog.png',
+   'กลุ่มนก':'beat-images/group4-bird.png'
+ };
+ const img=document.getElementById('beatGroupImage');
+ if(img){
+   img.src=imageByGroup[selectedGroup] || imageByGroup['กลุ่มช้าง'];
+   img.alt='กิจกรรม Beat ของ '+(selectedGroup || 'กลุ่มช้าง');
+ }
+}
+
+// ✏️ ภารกิจที่ 2: ใช้รูปภาพตามกลุ่ม + เล่นเสียงประจำกลุ่ม 1 ครั้ง (ไม่วน)
+function playRhythm(){
+ updateBeatContent();
+ playGroupSound(2);
+}
+function rhythmComplete(){
+ document.getElementById('r2').textContent='✅ ทำกิจกรรม Beat สำเร็จ!';
+ stopAnimalAudio();
+ addScore(25,2);
+}
+// ✏️ ภารกิจที่ 3 เรียกเสียงตามกลุ่มที่เลือก
+function song(s){ playGroupSound(3); }
+function finishSong(){
+ if(!selectedSong){document.getElementById('r3').textContent='⚠️ กรุณาเลือกเพลงก่อน';return}
+ document.getElementById('r3').textContent='🎉 ทำภารกิจได้ดีมาก!';stopAnimalAudio();addScore(25,3)
+}
+function addToken(t){created.push(t);renderCreated()}
+function renderCreated(){document.getElementById('created').innerHTML=created.map(x=>'<span class="token">'+x+'</span>').join('')}
+function clearRhythm(){created=[];renderCreated();document.getElementById('r4').textContent='สร้างจังหวะอย่างน้อย 1 ช่อง'}
+function playCreated(){
+ if(!created.length){document.getElementById('r4').textContent='⚠️ เพิ่มจังหวะก่อน';return}
+ created.forEach((x,i)=>{if(!x.includes('พัก')) beep(x.includes('กลอง')?180:x.includes('ตบมือ')?500:700,.12,i*.25)});
+ document.getElementById('r4').textContent='▶️ กำลังเล่นจังหวะของคุณ!';
+ addScore(25,4)
+}
+</script>
+</body>
+</html>
